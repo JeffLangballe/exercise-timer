@@ -5,14 +5,19 @@ function makeTimer(seconds, oncomplete) {
   let timerId;
   let ms = seconds * 1000;
   let timerObj = {};
+  timerObj.running = false;
 
   timerObj.resume = () => {
+    timerObj.running = true;
+    timerNameEl.innerText = "Timer is running";
     startTime = new Date().getTime();
     timerId = setInterval(timerObj.step, 250); // adjust this number to affect granularity
     // lower numbers are more accurate, but more CPU-expensive
   };
 
   timerObj.pause = () => {
+    timerObj.running = false;
+    timerNameEl.innerText = "Timer is paused";
     ms = timerObj.step();
     clearInterval(timerId);
   };
@@ -24,6 +29,7 @@ function makeTimer(seconds, oncomplete) {
     s = (s < 10 ? "0" : "") + s;
     timerTimeEl.innerText = m + ":" + s;
     if (now == 0) {
+      timerObj.running = false;
       clearInterval(timerId);
       timerObj.resume = () => {};
       if (oncomplete) oncomplete();
@@ -34,10 +40,13 @@ function makeTimer(seconds, oncomplete) {
   return timerObj;
 }
 
-console.log("hello world");
-
 let t = makeTimer(10, () => {
   const timerNameEl = document.getElementById("timer-name");
   timerNameEl.innerText = "Timer is done!";
 });
-t.resume();
+
+function pauseResume() {
+  console.log("pause/resume");
+  if (t.running) t.pause();
+  else t.resume();
+}
