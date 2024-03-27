@@ -29,24 +29,37 @@ function makeTimer(seconds, oncomplete) {
         s = (s < 10 ? "0" : "") + s;
         timerTimeEl.innerText = m + ":" + s;
         if (now == 0) {
-            timerObj.running = false;
-            clearInterval(timerId);
-            timerObj.resume = () => { };
+            timerObj.clear()
             if (oncomplete) oncomplete();
         }
         return now;
     };
 
+    timerObj.clear = () => {
+        timerObj.running = false;
+        clearInterval(timerId);
+        timerObj.resume = () => { };
+    }
+
     return timerObj;
 }
 
-let t = makeTimer(10, () => {
+function onTimerDone() {
     const timerNameEl = document.getElementById("timer-name");
     timerNameEl.innerText = "Timer is done!";
-});
+}
+
+let t = makeTimer(10, onTimerDone);
 
 function pauseResume() {
     console.log("pause/resume");
     if (t.running) t.pause();
     else t.resume();
+}
+
+function reset() {
+    t.clear();
+    document.getElementById("timer-name").innerText = "Timer is reset"
+    document.getElementById("timer-time").innerText = "X:XX"
+    t = makeTimer(10, onTimerDone);
 }
